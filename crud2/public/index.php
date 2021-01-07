@@ -1,41 +1,36 @@
-<html><head><meta charset="utf-8"> </head><body>
 <?php
 
-include "databaseconnect.php";
-include "conection.php";
+define('HOST','localhost:3306');
+define('USUARIO','root');
+define('CLAVE','katavigaming5');
+define('BASE','prueba');
 
-$resultados
+echo "Ingresar cedula: \n";
+$cedula = trim(fgets(STDIN));
+echo "Ingresar nombre: \n";
+$nombre = trim(fgets(STDIN));
+echo "Ingresar apellido: \n";
+$apellido = trim(fgets(STDIN));
 
-if ($resultados !=NULL)
-
+$link = mysqli_connect(HOST,USUARIO,CLAVE);
+mysqli_select_db($link,BASE);
+mysqli_query($link,"INSERT INTO registro (nombre,apellido,cedula) VALUES('$nombre','$apellido','$cedula')");
+do
+    {
+    echo "Insercion realizada correctamente. Deseas revisar la tabla? (S/N)";
+    $revisar = strtolower(trim(fgets(STDIN)));
+    }
+while($revisar != 's' && $revisar !='n');
+if($revisar == 's')
 {
-
-echo "- nombre: ".$resultados['nombre']."<br/> ";
-
-echo "- apellidos: ".$resultados['apellidos']."<br/>";
-
-echo "- cedula: ".$resultados['cedula']."<br/>";
-
-echo "**********************************<br/>";
-
+    $rs = mysqli_query($link,"SELECT * FROM registro;");
+    echo "Cedula, Nombre, Apellido\n";
+    while (($fila = mysqli_fetch_assoc($rs)))
+    {
+        echo "$fila[cedula], $fila[nombre], $fila[apellido]\n";
+    }
 }
-
 else
     {
-    echo "<br/>No hay más datos!!! <br/>";
-    }
-
-$link = mysqli_connect("localhost:3306", "root", "katavigaming5");
-
-mysqli_select_db($link, "prueba");
-
-$tildes = $link->query("SET NAMES 'utf8'");
-
-$result = mysqli_query($link, "SELECT * FROM registro");
-
-while ($fila = mysqli_fetch_array($result)){ mostrarDatos($fila); }
-
-mysqli_free_result($result); mysqli_close($link);
-
-?>
-</body></html>
+    die('Hasta luego');
+}
